@@ -1,0 +1,131 @@
+@startuml EasyHome
+
+class Persona {
+    nombre: String
+    apellido: String
+    tipoDNI: String
+    numeroDNI: String
+    fechaNacimiento: Date
+    email: String
+    telefono: String
+    direccion: String
+}
+
+class Inquilino {
+    usuario: String
+    contraseña: String
+    -registrarUsuario(datos)
+    -editarUsuario(datos)
+    -login()
+}
+
+class Propietario {
+    propiedades: List<Alojamiento>
+}
+
+class Alojamiento {
+    numeroDormitorios: int
+    numeroBaños: int
+    ocupacionMaxima: int
+    comodidades: List<Comodidad>
+    propietario: Propietario
+    direccion: String
+    zonaTuristica: ZonaTuristica
+    fotos: List<String>
+    estado: Estado
+    precio: float
+    formasDePagoHabilitadas: FormaDePago
+    publicado: Boolean
+    valoracion: Float
+    +reservarAlojamiento()
+    +registrarCheckIn()
+    +registrarCheckOut()
+    +publicarAlojamiento()
+    +buscarAlojamiento(filtros)
+    +valorarAlojamiento(Float)
+    +editarAlojamiento(datos)
+}
+
+class ZonaTuristica {
+    nombre: String
+    longitud: float
+    latitud: float
+    codigoPostal: String
+}
+
+class Estado {
+    nombreEstado: String
+    codigoEstado: int
+    descripcion: String
+    +getEstado(int)
+}
+
+class Comodidad {
+    nombreComodidad: String
+    codigoComodidad: int
+    descripcion: String
+    +getComodidad(int)
+}
+
+class Reserva {
+    numeroReserva: int
+    fechaInicio: Date
+    fechaFin: Date
+    inquilino: Inquilino
+    alojamiento: Alojamiento
+    cantidadInquilinos: int
+    monto: float
+    estadoDePago: bool
+    estadoReserva: Estado
+    +consultarReserva(Reserva)
+    +cancelarReserva(Reserva)
+    +editarReserva(Reserva)
+}
+
+class Pago {
+    codigo: int
+    tipo: string
+    montoPagado: float
+    formaDePago: FormaDePago
+    fechaDePago: Date
+    +registrarPago()
+}
+
+class FormaDePago {
+    codigoFormaDePago: int
+    nombreFormaDePago: String
+    descripcion: String
+    +getFormaDePago(int)
+}
+
+class Alquiler {
+    numeroAlquiler: int
+    fechaInicio: Date
+    fechaFin: Date
+    inquilino: Inquilino
+    alojamiento: Alojamiento
+    cantidadInquilinos: int
+    monto: float
+    +consultarAlquiler()
+}
+
+Persona <|-left- Inquilino
+Inquilino <|-right- Propietario
+
+Alojamiento "0-n" <-left- "1" Propietario
+Alojamiento "0-n" o-> "0-n" Comodidad
+Alojamiento "0-n" --> "1" ZonaTuristica
+Alojamiento "0-n" --> "1" Estado
+Alojamiento "0-n" -->  "1" FormaDePago
+
+Inquilino "1" --> "0-n" Reserva
+Inquilino "1" --> "0-n" Alquiler
+Alojamiento "1" <-up- "0-n" Reserva
+Alojamiento "1" <-up- "0-n" Alquiler
+Reserva "0-1" -left-> "0-1" Alquiler
+
+Pago "0-n" --> "1-n" FormaDePago
+Reserva "0-1" --> "0-n" Pago
+Alquiler "0-1" --> "0-n" Pago
+
+@enduml
